@@ -613,6 +613,36 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         """
         return self._cantor_reduction_generic(u0, v0)
 
+    def cantor_add(self, u1, v1, u2, v2):
+        r"""
+        Add divisor (u1, v1) to (u2, v2)
+
+        TESTS::
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^7 + x^5 + x + 1)
+            sage: J =  Jacobian(H)
+            sage: JF = J.point_homset()
+            sage: (u1, v1) = (x^3 + 4*x^2, 10*x^2 + 7*x + 1)
+            sage: (u2, v2) = (x^3 + 8*x^2 + 11*x + 2, x^2 + 9*x + 10)
+            sage: ans = JF.cantor_add(u1, v1, u2, v2)
+            sage: J(u1, v1) + J(u2, v2) == J(ans)
+            True
+
+        """
+        # Collect data from HyperellipticCurve
+        H = self.extended_curve()
+        g = H.genus()
+
+        # Step one: cantor composition of the two divisors
+        u3, v3 = self.cantor_composition(u1, v1, u2, v2)
+
+        # Step two: cantor reduction of the above to ensure
+        # the degree of u is smaller than g + 1
+        while u3.degree() > g:
+            u3, v3 = self.cantor_reduction(u3, v3)
+        v3 = v3 % u3
+        return (u3, v3)
+
     def lift_u(self, u, all=False):
         r"""
         Return one or all points with given `u`-coordinate.
