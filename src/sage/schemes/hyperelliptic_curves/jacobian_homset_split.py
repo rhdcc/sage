@@ -372,3 +372,44 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             n1 = n0 + g + 1 - u1.degree()
 
         return u1, v1, n1
+
+    def cantor_add(self, u1, v1, n1, u2, v2, n2):
+        r"""
+        Return the sum of the two elements.
+
+        Follows algorithm 3.7 of [Mireles2008]_.
+
+        EXAMPLES::
+        
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^7 - x^6 + x, x^4 + 1)
+            sage: J = Jacobian(H)
+            sage: JF = J.point_homset()
+            sage: (u1, v1, n1) = (x^2 + 7*x, 8*x + 12, 1)
+            sage: (u2, v2, n2) = (x^3 + 5*x^2 + 12*x + 9, 5*x^2 + 8*x + 10, 0)
+            sage: D1 = J(u1, v1, n1) 
+            sage: D2 = J(u2, v2, n2)
+            sage: ans = JF.cantor_add(u1, v1, n1, u2, v2, n2)
+            sage: J(ans) == D1 + D2
+            True
+        """
+        # Collect data from HyperellipticCurve
+        H = self.curve()
+        g = H.genus()
+
+        # Step one: cantor composition of the two divisors
+        u3, v3, n3 = self.cantor_composition(u1, v1, n1, u2, v2, n2)
+
+        # Step two: cantor reduction of the above to ensure
+        # the degree of u is smaller than g + 1
+        while u3.degree() > (g + 1):
+            u3, v3, n3 = self.cantor_reduction(u3, v3, n3)
+
+        # Step three: compose and then reduce at infinity to ensure
+        # unique representation of D
+        while n3 < 0 or n3 > g - u3.degree():
+            u3, v3, n3 = self._parent.cantor_compose_at_infinity(
+                u3, v3, n3, plus=(n3 >= 0)
+            )
+
+        return (u3, v3, n3)

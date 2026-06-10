@@ -318,13 +318,14 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             True
         """
         # Collect data from HyperellipticCurve
-        H = self.parent().curve()
-        g = H.genus()
+        ## H = self.parent().curve()
+        ## g = H.genus()
 
         # Extract out mumford coordinates
         u1, v1 = self.uv()
         u2, v2 = other.uv()
 
+        """
         # Step one: cantor composition of the two divisors
         u3, v3 = self._parent.cantor_composition(u1, v1, u2, v2)
 
@@ -333,7 +334,9 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         while u3.degree() > g:
             u3, v3 = self._parent.cantor_reduction(u3, v3)
         v3 = v3 % u3
-
+        """
+        
+        u3, v3 = self._parent.cantor_add(u1, v1, u2, v2)
         return self._parent(u3, v3, check=False)
 
     def _neg_(self) -> Self:
@@ -644,8 +647,8 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
             (x^2 - 1/2*x, 5/4*x - 1 : 0)
         """
         # Collect data from HyperellipticCurve
-        H = self.parent().curve()
-        g = H.genus()
+        ## H = self.parent().curve()
+        ## g = H.genus()
 
         # Extract out mumford coordinates
         u1, v1 = self.uv()
@@ -654,6 +657,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         # Extract out integers for weights
         n1, n2 = self._n, other._n
 
+        """
         # Step one: cantor composition of the two divisors
         u3, v3, n3 = self._parent.cantor_composition(u1, v1, n1, u2, v2, n2)
 
@@ -668,7 +672,9 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
             u3, v3, n3 = self._parent.cantor_compose_at_infinity(
                 u3, v3, n3, plus=(n3 >= 0)
             )
-
+        """
+        
+        u3, v3, n3 = self._parent.cantor_add(u1, v1, n1, u2, v2, n2)
         return self._parent(u3, v3, n3, check=False)
 
     def _neg_(self):
