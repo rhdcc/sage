@@ -408,7 +408,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         # Step three: compose and then reduce at infinity to ensure
         # unique representation of D
         while n3 < 0 or n3 > g - u3.degree():
-            u3, v3, n3 = self._parent.cantor_compose_at_infinity(
+            u3, v3, n3 = self.cantor_compose_at_infinity(
                 u3, v3, n3, plus=(n3 >= 0)
             )
 
