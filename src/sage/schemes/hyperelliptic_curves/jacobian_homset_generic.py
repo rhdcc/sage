@@ -636,8 +636,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
             sage: J = Jacobian(C)
             sage: JF = J.point_homset()
-            sage: (u1, v1) = (x + 100, 27)
-            sage: (u2, v2) = (x + 2, 52)
+            sage: (u1, v1) = (x + 100, 27*x^0)
+            sage: (u2, v2) = (x + 2, 52*x^0)
             sage: (u3, v3) = JF.cantor_add(u1, v1, u2, v2)
             sage: (u3, v3) == (x^2 + x + 99, 59*x + 69)
             True
