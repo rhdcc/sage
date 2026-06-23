@@ -659,6 +659,179 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         v3 = v3 % u3
         return (u3, v3)
 
+    def _nudupl(self, u1, v1):
+        r"""
+        Return the sum of the reduced divisor ``(u1, v1)`` with itself.
+
+        Note that the divisor is assumed to be affine and reduced, and
+        lie on a ramified hyperelliptic curve.
+        This uses a more efficient algorithm called NUDUPL, which is the
+        NUCOMP algorithm applied to the specific case when the two summands
+        are the same.
+        
+        INPUT:
+        - ``(u1, v1)`` -- The mumford representation of a reduced divisor
+        given by the univariate polynomials ``u1`` and ``v1``
+
+        OUTPUT: ``(u, v)`` -- The mumford representation of the reduced
+        divisor denoting the double of the divisor ``(u1, v1)``
+        
+        EXAMPLES::
+
+            sage: R.<x> = GF(101)[]
+            sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
+            sage: J = Jacobian(C)
+            sage: JF = J.point_homset()
+            sage: (u1, v1) = (x + 100, 27*x^0)
+            sage: (u, v) = JF.nucomp(u1, v1, u1, v1)
+            sage: (u, v) == (x^2 + 99*x + 1, 20*x + 7)
+            True
+        
+        ALGORITHM: The following code is adapted from Algorithm 20 of [Lin2020]_.
+        
+        """
+        # Collect data from HyperellipticCruve
+        H = self.extended_curve()
+        g = H.genus()
+        f, h = H.hyperelliptic_polynomials()
+        
+        t1 = v1 + h
+        t2 = v1 + t1
+        s,a1,b1 = u1.xgcd(t2)
+        w1 = (f - v1 * (v1 + h)) // u1
+        K = b1 * w1
+        
+        if s != 1:
+            u1 = u1 // s
+            w1 = w1 * s
+        
+        K = K.mod(u1)
+        
+        if 2 * u1.degree() <= g:
+            u = u1 * u1
+            v = v1 + u1 * K
+            if v.degree() >= u.degree():
+                (q, r) = v.quo_rem(u)
+                v = r
+        else:
+            r = K
+            rp = u1
+            cp = 0
+            c = -1
+            l = -1
+            while r.degree() > g / 2:
+                q,rn = rp.quo_rem(r)
+                rp = r
+                r = rn
+                cn = cp - q * c
+                cp = c
+                c = cn
+                l = -l
+            
+            M2 = (r * t2 + w1 * c) // u1
+            up = l * (r * r - c * M2)
+            z = (u1 * r + cp * up) // c
+            v = (z - t1).mod(up)
+            u = up.monic()
+        
+        return (u, v)
+
+    def nucomp(self, u1, v1, u2, v2):
+        r"""
+        Return the sum of two reduced divisors ``(u1, v1)`` and ``(u2, v2)``.
+
+        Note that the divisors are assumed to be affine and reduced, and
+        lie on a ramified hyperelliptic curve.
+        This uses a more efficient algorithm than cantor for divisor addition.
+        
+        INPUT:
+        - ``(u1, v1)`` -- The mumford representation of a reduced divisor
+        given by the univariate polynomials ``u1`` and ``v1``
+        - ``(u2, v2)`` -- The mumford representation of a reduced divisor
+        given by the univariate polynomials ``u2`` and ``v2``
+
+        OUTPUT: ``(u3, v3)`` -- The mumford representation of the reduced
+        divisor denoting the sum of the divisors ``(u1, v1)`` and
+        ``(u2, v2)``
+        
+        EXAMPLES::
+
+            sage: R.<x> = GF(101)[]
+            sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
+            sage: J = Jacobian(C)
+            sage: JF = J.point_homset()
+            sage: (u1, v1) = (x + 100, 27*x^0)
+            sage: (u2, v2) = (x + 2, 52*x^0)
+            sage: (u3, v3) = JF.nucomp(u1, v1, u2, v2)
+            sage: (u3, v3) == (x^2 + x + 99, 59*x + 69)
+            True
+        
+        ALGORITHM: The following code is adapted from Algorithm 19 of [Lin2020]_.
+        
+        """
+        # Collect data from HyperellipticCruve
+        H = self.extended_curve()
+        g = H.genus()
+        f, h = H.hyperelliptic_polynomials()
+        
+        if (u1 == u2) and (v1 == v2):
+            return self._nudupl(u1, v1)
+
+        if u1.degree() < u2.degree():
+            ut = u2
+            vt = v2
+            u2 = u1
+            v2 = v1
+            u1 = ut
+            v1 = vt
+
+        w1 = (f-v1*(v1+h)) // u1
+        t1 = v1 + h
+        t2 = v2 - v1
+        s,a1,b1 = u1.xgcd(u2)
+        k = (a1 * t2) % (u2)    
+
+        if s != 1:
+            sp, a2, b2 = u1.xgcd(v2 + t1)
+            k = (a2 * k) + (b2 * w1) % u2
+            if sp != 1:
+                u1 = u1 // sp
+                u2 = u2 // sp
+                w1 = w1 * sp
+                s = sp
+            
+        if u2.degree() + u1.degree() <= g:
+            t = u1 * k
+            u = u1 * u2
+            v = v1 + t
+            if v.degree() >= u.degree():
+                (q, r) = v.quo_rem(u)
+                w = w + q * (v + h + r)
+                v = r
+        else:
+            r = k
+            rp = u2
+            cp = 0
+            c = -1
+            l = -1
+            
+            while r.degree() > (u2.degree() - u1.degree() + g) / 2:
+                q, rn = rp.quo_rem(r)
+                rp = r
+                r = rn
+                cn = cp - q * c
+                cp = c
+                c = cn
+                l = -l
+            t3 = u1 * r
+            M1 = (t3 + t2 * c) // u2
+            M2 = (r * (v2 + t1) + w1 * c) // u2
+            u = l * (r * M1 - c * M2)
+            v = (((t3 + cp * u) // c) - t1) % u
+            u = u.monic()
+        
+        return (u, v)
+
     def lift_u(self, u, all=False):
         r"""
         Return one or all points with given `u`-coordinate.
