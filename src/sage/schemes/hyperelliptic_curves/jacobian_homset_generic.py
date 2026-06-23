@@ -615,18 +615,34 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def cantor_add(self, u1, v1, u2, v2):
         r"""
-        Add divisor (u1, v1) to (u2, v2)
+        Return the sum of two divisors ``(u1, v1)`` and ``(u2, v2)``.
 
-        TESTS::
-            sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurve(x^7 + x^5 + x + 1)
-            sage: J =  Jacobian(H)
+        Note that the divisors are assumed to be affine, reduced and are
+        assumed to lie on a ramified hyperelliptic curve.
+
+        INPUT:
+        - ``(u1, v1)`` -- The mumford representation of a reduced divisor
+        given by the univariate polynomials ``u1`` and ``v1``
+        - ``(u2, v2)`` -- The mumford representation of a reduced divisor
+        given by the univariate polynomials ``u2`` and ``v2``
+
+        OUTPUT: ``(u3, v3)`` -- The mumford representation of the reduced
+        divisor denoting the sum of the divisors ``(u1, v1)`` and
+        ``(u2, v2)``
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(101)[]
+            sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
+            sage: J = Jacobian(C)
             sage: JF = J.point_homset()
-            sage: (u1, v1) = (x^3 + 4*x^2, 10*x^2 + 7*x + 1)
-            sage: (u2, v2) = (x^3 + 8*x^2 + 11*x + 2, x^2 + 9*x + 10)
-            sage: ans = JF.cantor_add(u1, v1, u2, v2)
-            sage: J(u1, v1) + J(u2, v2) == J(ans)
+            sage: (u1, v1) = (x + 100, 27)
+            sage: (u2, v2) = (x + 2, 52)
+            sage: (u3, v3) = JF.cantor_add(u1, v1, u2, v2)
+            sage: (u3, v3) == (x^2 + x + 99, 59*x + 69)
             True
+
+        ALGORITHM: The following code is adapted from Algorithm 3.3 of [Mireles2008]_.
 
         """
         # Collect data from HyperellipticCurve

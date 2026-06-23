@@ -317,25 +317,10 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: D1 + D2 + D3 == D3 + D1 + D2
             True
         """
-        # Collect data from HyperellipticCurve
-        ## H = self.parent().curve()
-        ## g = H.genus()
-
         # Extract out mumford coordinates
         u1, v1 = self.uv()
         u2, v2 = other.uv()
 
-        """
-        # Step one: cantor composition of the two divisors
-        u3, v3 = self._parent.cantor_composition(u1, v1, u2, v2)
-
-        # Step two: cantor reduction of the above to ensure
-        # the degree of u is smaller than g + 1
-        while u3.degree() > g:
-            u3, v3 = self._parent.cantor_reduction(u3, v3)
-        v3 = v3 % u3
-        """
-        
         u3, v3 = self._parent.cantor_add(u1, v1, u2, v2)
         return self._parent(u3, v3, check=False)
 
@@ -631,8 +616,6 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         r"""
         Return the sum of the two elements.
 
-        Follows algorithm 3.7 of [Mireles2008]_.
-
         EXAMPLES::
 
             sage: R.<x> = QQ[]
@@ -646,10 +629,6 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
             sage: D1 + D3
             (x^2 - 1/2*x, 5/4*x - 1 : 0)
         """
-        # Collect data from HyperellipticCurve
-        ## H = self.parent().curve()
-        ## g = H.genus()
-
         # Extract out mumford coordinates
         u1, v1 = self.uv()
         u2, v2 = other.uv()
@@ -657,23 +636,6 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         # Extract out integers for weights
         n1, n2 = self._n, other._n
 
-        """
-        # Step one: cantor composition of the two divisors
-        u3, v3, n3 = self._parent.cantor_composition(u1, v1, n1, u2, v2, n2)
-
-        # Step two: cantor reduction of the above to ensure
-        # the degree of u is smaller than g + 1
-        while u3.degree() > (g + 1):
-            u3, v3, n3 = self._parent.cantor_reduction(u3, v3, n3)
-
-        # Step three: compose and then reduce at infinity to ensure
-        # unique representation of D
-        while n3 < 0 or n3 > g - u3.degree():
-            u3, v3, n3 = self._parent.cantor_compose_at_infinity(
-                u3, v3, n3, plus=(n3 >= 0)
-            )
-        """
-        
         u3, v3, n3 = self._parent.cantor_add(u1, v1, n1, u2, v2, n2)
         return self._parent(u3, v3, n3, check=False)
 

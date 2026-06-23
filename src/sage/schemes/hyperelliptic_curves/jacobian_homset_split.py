@@ -375,23 +375,39 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
 
     def cantor_add(self, u1, v1, n1, u2, v2, n2):
         r"""
-        Return the sum of the two elements.
+        Return the sum of two divisors ``(u1, v1, n1)`` and ``(u1, v1, n2)``.
 
-        Follows algorithm 3.7 of [Mireles2008]_.
+        Note that the divisors are assumed to lie on a split hyperelliptic
+        curve.
+
+        INPUT:
+        - ``(u1, v1)`` -- The mumford representation of a reduced divisor
+        given by the univariate polynomials ``u1`` and ``v1``
+        - ``n1`` -- non-negative integer; denotes the coefficient of
+        the point `\infty^{+}` in the divisor `(u_{1}, v_{1})`
+        - ``(u2, v2)`` -- The mumford representation of a reduced divisor
+        given by the univariate polynomials ``u2`` and ``v2``
+        - ``n2`` -- non-negative integer; denotes the coefficient of
+        the point `\infty^{+}` in the divisor `(u_{2}, v_{2})`
+
+        OUTPUT: ``(u3, v3, n3)`` -- The mumford representation of the reduced
+        divisor denoting the sum of the divisors ``(u1, v1)`` and
+        ``(u2, v2)`` with the appropriate coefficient of `\infty^{+}`
 
         EXAMPLES::
         
             sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurve(x^7 - x^6 + x, x^4 + 1)
-            sage: J = Jacobian(H)
+            sage: C = HyperellipticCurve(x^7 - x^6 + x, x^4 + 1)
+            sage: J = Jacobian(C)
             sage: JF = J.point_homset()
             sage: (u1, v1, n1) = (x^2 + 7*x, 8*x + 12, 1)
             sage: (u2, v2, n2) = (x^3 + 5*x^2 + 12*x + 9, 5*x^2 + 8*x + 10, 0)
-            sage: D1 = J(u1, v1, n1) 
-            sage: D2 = J(u2, v2, n2)
-            sage: ans = JF.cantor_add(u1, v1, n1, u2, v2, n2)
-            sage: J(ans) == D1 + D2
+            sage: (u3, v3, n3) = JF.cantor_add(u1, v1, n1, u2, v2, n2)
+            sage: (u3, v3, n3) == (x^3 + 4*x^2 + 4*x + 3, 12*x^2 + 7*x + 9, 0)
             True
+
+        ALGORITHM: The following code follows Algorithm 3.7 of [Mireles2008]_.
+
         """
         # Collect data from HyperellipticCurve
         H = self.curve()
