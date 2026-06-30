@@ -4761,8 +4761,9 @@ REFERENCES:
 .. [Lim2001] \C. H. Lim,
              *A Revised Version of CRYPTON: CRYPTON V1.0*; in FSE'01, pp. 31--45.
 
-.. [Lin2020] \S. A. Lindner
-             *Improvements to Divisor Class Arithmetic on Hyperelliptic Curves*
+.. [Lin2020] Sebastian Anton Lindner
+             *Improvements to Divisor Class Arithmetic on Hyperelliptic Curves*, (2020).
+             http://hdl.handle.net/1880/114471
              
 .. [Lin1999] \J. van Lint, Introduction to coding theory, 3rd ed.,
              Springer-Verlag GTM, 86, 1999.
