@@ -617,18 +617,21 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         r"""
         Return the sum of two divisors ``(u1, v1)`` and ``(u2, v2)``.
 
-        Note that the divisors are assumed to be affine, reduced and are
-        assumed to lie on a ramified hyperelliptic curve.
+        Note that the divisors are assumed to be affine, reduced and lie on
+        a ramified hyperelliptic curve.
 
         INPUT:
-        - ``(u1, v1)`` -- The mumford representation of a reduced divisor
-        given by the univariate polynomials ``u1`` and ``v1``
-        - ``(u2, v2)`` -- The mumford representation of a reduced divisor
-        given by the univariate polynomials ``u2`` and ``v2``
+        - ``(u1, v1)`` -- The mumford representation of a reduced affine
+        divisor `D_1` which corresponds to the divisor
+        `D_1 - \text{deg}(u_1)\infty` on the curve.
+        
+        - ``(u2, v2)`` -- The mumford representation of a reduced affine
+        divisor `D_2` which corresponds to the divisor
+        `D_2 - \text{deg}(u_2)\infty` on the curve.
 
         OUTPUT: ``(u3, v3)`` -- The mumford representation of the reduced
-        divisor denoting the sum of the divisors ``(u1, v1)`` and
-        ``(u2, v2)``
+        affine divisor `D_3` satisfying
+        `[D_3 - \text{deg}(u_3)\infty] = [D_1 - \text{deg}(u_1)\infty] + [D_2 - \text{deg}(u_2)\infty]`.
 
         EXAMPLES::
 
@@ -643,6 +646,18 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             True
 
         ALGORITHM: The following code is adapted from Algorithm 3.3 of [Mireles2008]_.
+
+        TESTS::
+
+            sage: R.<x> = GF(101)[]
+            sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
+            sage: J = Jacobian(C)
+            sage: JF = J.point_homset()
+            sage: (u1, v1) = (1*x^0, 0*x^0)
+            sage: (u2, v2) = (x + 100, 27*x^0)
+            sage: (u3, v3) = JF.cantor_add(u1, v1, u2, v2) # Add the identity divisor
+            sage: (u3, v3) == (x + 100, 27*x^0)
+            True
 
         """
         # Collect data from HyperellipticCurve
@@ -663,18 +678,19 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         r"""
         Return the sum of the reduced divisor ``(u1, v1)`` with itself.
 
-        Note that the divisor is assumed to be affine and reduced, and
-        lie on a ramified hyperelliptic curve.
+        Note that the divisor is assumed to be affine, reduced and lie on a
+        ramified hyperelliptic curve.
         This uses a more efficient algorithm called NUDUPL, which is the
         NUCOMP algorithm applied to the specific case when the two summands
         are the same.
         
         INPUT:
-        - ``(u1, v1)`` -- The mumford representation of a reduced divisor
-        given by the univariate polynomials ``u1`` and ``v1``
+        - ``(u1, v1)`` -- The mumford representation of a reduced affine
+        divisor `D_1` which corresponds to the divisor
+        `D_1 - \text{deg}(u_1)\infty` on the curve.
 
-        OUTPUT: ``(u, v)`` -- The mumford representation of the reduced
-        divisor denoting the double of the divisor ``(u1, v1)``
+        OUTPUT: ``(u, v)`` -- The mumford representation of the reduced affine
+        divisor denoting the double of the divisor ``(u1, v1)``.
         
         EXAMPLES::
 
@@ -688,6 +704,17 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             True
         
         ALGORITHM: The following code is adapted from Algorithm 20 of [Lin2020]_.
+
+        TESTS::
+
+            sage: R.<x> = GF(101)[]
+            sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
+            sage: J = Jacobian(C)
+            sage: JF = J.point_homset()
+            sage: (u1, v1) = (1*x^0, 0*x^0)
+            sage: (u, v) = JF.nucomp(u1, v1, u1, v1) # Add the identity divisor
+            sage: (u, v) == (1*x^0, 0*x^0)
+            True
         
         """
         # Collect data from HyperellipticCruve
@@ -740,19 +767,22 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         r"""
         Return the sum of two reduced divisors ``(u1, v1)`` and ``(u2, v2)``.
 
-        Note that the divisors are assumed to be affine and reduced, and
-        lie on a ramified hyperelliptic curve.
-        This uses a more efficient algorithm than cantor for divisor addition.
-        
+        Note that the divisors are assumed to be affine, reduced and lie on a
+        ramified hyperelliptic curve. This uses a more efficient algorithm
+        than cantor for divisor addition.
+
         INPUT:
-        - ``(u1, v1)`` -- The mumford representation of a reduced divisor
-        given by the univariate polynomials ``u1`` and ``v1``
-        - ``(u2, v2)`` -- The mumford representation of a reduced divisor
-        given by the univariate polynomials ``u2`` and ``v2``
+        - ``(u1, v1)`` -- The mumford representation of a reduced affine
+        divisor `D_1` which corresponds to the divisor
+        `D_1 - \text{deg}(u_1)\infty` on the curve.
+        
+        - ``(u2, v2)`` -- The mumford representation of a reduced affine
+        divisor `D_2` which corresponds to the divisor
+        `D_2 - \text{deg}(u_2)\infty` on the curve.
 
         OUTPUT: ``(u3, v3)`` -- The mumford representation of the reduced
-        divisor denoting the sum of the divisors ``(u1, v1)`` and
-        ``(u2, v2)``
+        affine divisor `D_3` satisfying
+        `[D_3 - \text{deg}(u_3)\infty] = [D_1 - \text{deg}(u_1)\infty] + [D_2 - \text{deg}(u_2)\infty]`.
         
         EXAMPLES::
 
@@ -767,6 +797,18 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             True
         
         ALGORITHM: The following code is adapted from Algorithm 19 of [Lin2020]_.
+
+        TESTS::
+
+            sage: R.<x> = GF(101)[]
+            sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
+            sage: J = Jacobian(C)
+            sage: JF = J.point_homset()
+            sage: (u1, v1) = (1*x^0, 0*x^0)
+            sage: (u2, v2) = (x + 100, 27*x^0)
+            sage: (u3, v3) = JF.nucomp(u1, v1, u2, v2) # Add the identity divisor
+            sage: (u3, v3) == (x + 100, 27*x^0)
+            True
         
         """
         # Collect data from HyperellipticCruve
