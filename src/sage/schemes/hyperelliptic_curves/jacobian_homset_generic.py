@@ -796,7 +796,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: (u3, v3) == (x^2 + x + 99, 59*x + 69)
             True
         
-        ALGORITHM: The following code is adapted from Algorithm 19 of [Lin2020]_.
+        ALGORITHM: The following code is adapted from Algorithm 3 of [LIJ2020]_.
 
         TESTS::
 
