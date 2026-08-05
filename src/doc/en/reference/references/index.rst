@@ -4764,6 +4764,10 @@ REFERENCES:
 .. [Lin2020] Sebastian Anton Lindner
              *Improvements to Divisor Class Arithmetic on Hyperelliptic Curves*, (2020).
              http://hdl.handle.net/1880/114471
+
+.. [LIJ2020] Lindner, S., Imbert, L., Jacobson, M.J. (2020). Balanced NUCOMP.
+             In: Boulier, F., England, M., Sadykov, T.M., Vorozhtsov, E.V. (eds) Computer Algebra in Scientific Computing. CASC 2020. Lecture Notes in Computer Science(), vol 12291. Springer, Cham.
+             https://doi.org/10.1007/978-3-030-60026-6_23
              
 .. [Lin1999] \J. van Lint, Introduction to coding theory, 3rd ed.,
              Springer-Verlag GTM, 86, 1999.
