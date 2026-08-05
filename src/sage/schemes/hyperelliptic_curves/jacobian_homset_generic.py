@@ -811,13 +811,12 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             True
         
         """
-        # Collect data from HyperellipticCruve
+        if (u1 == u2) and (v1 == v2):
+            return self._nudupl(u1, v1)
+        
         H = self.extended_curve()
         g = H.genus()
         f, h = H.hyperelliptic_polynomials()
-        
-        if (u1 == u2) and (v1 == v2):
-            return self._nudupl(u1, v1)
 
         if u1.degree() < u2.degree():
             ut = u2
@@ -827,51 +826,68 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             u1 = ut
             v1 = vt
 
-        w1 = (f-v1*(v1+h)) // u1
         t1 = v1 + h
         t2 = v2 - v1
-        s,a1,b1 = u1.xgcd(u2)
-        k = (a1 * t2) % (u2)    
+        d, e1, e2 = u1.xgcd(u2)
+        tmp1 = (e1 * t2)
+        s = tmp1 % u2
+        tmp1 = v1 * t1
+        tmp2 = f - tmp1
+        k = tmp2 // u1
 
-        if s != 1:
-            sp, a2, b2 = u1.xgcd(v2 + t1)
-            k = (a2 * k) + (b2 * w1) % u2
-            if sp != 1:
-                u1 = u1 // sp
-                u2 = u2 // sp
-                w1 = w1 * sp
-                s = sp
+        if d.degree() != 0:
+            tmp1 = v2 + t1
+            d, e3, e4 = d.xgcd(tmp1)
+            tmp1 = e3 * s
+            tmp2 = e4 * k
+            s = tmp1 + tmp2
+            if d.degree() != 0:
+                u1 = u1 // d
+                u2 = u2 // d
+                k = k * d
+            s = s % u2
             
         if u2.degree() + u1.degree() <= g:
-            t = u1 * k
-            u = u1 * u2
-            v = v1 + t
-            if v.degree() >= u.degree():
-                (q, r) = v.quo_rem(u)
-                w = w + q * (v + h + r)
-                v = r
+            u = u2 * u1
+            tmp1 = s * u1
+            tmp2 = v1 + tmp1
+            v = tmp2 % u
         else:
-            r = k
             rp = u2
-            cp = 0
-            c = -1
+            r = s
+            cp =  0
+            c  = -1
             l = -1
-            
-            while r.degree() > (u2.degree() - u1.degree() + g) / 2:
+            while r.degree() > (u2.degree() - u1.degree() + g) // 2:
                 q, rn = rp.quo_rem(r)
                 rp = r
                 r = rn
-                cn = cp - q * c
+                tmp1 = q * c
+                cn = cp - tmp1
                 cp = c
                 c = cn
                 l = -l
+                
             t3 = u1 * r
-            M1 = (t3 + t2 * c) // u2
-            M2 = (r * (v2 + t1) + w1 * c) // u2
-            u = l * (r * M1 - c * M2)
-            v = (((t3 + cp * u) // c) - t1) % u
+            tmp1 = t2 * c
+            tmp2 = t3 + tmp1
+            M1 = tmp2 // u2
+            tmp1 = v2 + t1
+            tmp2 = r * tmp1
+            tmp3 = k * c
+            tmp4 = tmp2 + tmp3
+            M2 = tmp4 // u2
+            tmp1 = r * M1
+            tmp2 = c * M2
+            tmp3 = tmp1 - tmp2
+            u = l * tmp3
+            tmp1 = cp * u
+            tmp2 = t3 + tmp1
+            z = tmp2 // c 
+            tmp1 = z - t1
+            v = tmp1 % u
             u = u.monic()
-        
+            
         return (u, v)
 
     def lift_u(self, u, all=False):
