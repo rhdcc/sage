@@ -637,26 +637,33 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             sage: R.<x> = GF(101)[]
             sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
-            sage: J = Jacobian(C)
-            sage: JF = J.point_homset()
-            sage: (u1, v1) = (x + 100, 27*x^0)
-            sage: (u2, v2) = (x + 2, 52*x^0)
+            sage: JF = Jacobian(C).point_homset()
+            sage: (u1, v1) = (x^3 + 58*x^2 + 47*x + 63, 70*x^2 + 61*x + 99)
+            sage: (u2, v2) = (x^3 + 44*x^2 + 44*x + 20, 16*x^2 + 23*x + 66)
             sage: (u3, v3) = JF.cantor_add(u1, v1, u2, v2)
-            sage: (u3, v3) == (x^2 + x + 99, 59*x + 69)
+            sage: (u3, v3) == (x^3 + 5*x^2 + 92*x + 31, 21*x^2 + 71*x + 90)
             True
 
         ALGORITHM: The following code is adapted from Algorithm 3.3 of [Mireles2008]_.
 
         TESTS::
 
-            sage: R.<x> = GF(101)[]
-            sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
-            sage: J = Jacobian(C)
-            sage: JF = J.point_homset()
-            sage: (u1, v1) = (1*x^0, 0*x^0)
-            sage: (u2, v2) = (x + 100, 27*x^0)
-            sage: (u3, v3) = JF.cantor_add(u1, v1, u2, v2) # Add the identity divisor
-            sage: (u3, v3) == (x + 100, 27*x^0)
+            sage: R.<x> = GF(2)[]
+            sage: C = HyperellipticCurve(x^7 + x, 1)
+            sage: JF = Jacobian(C).point_homset()
+            sage: (u1, v1) = (x^3 + x^2 + x, x^2 + x + 1)
+            sage: (u2, v2) = (x^3 + x^2 + 1, x^2)
+            sage: (u3, v3) = JF.cantor_add(u1, v1, u2, v2)
+            sage: (u3, v3) == (x + 1, 1)
+            True
+
+            sage: R.<x> = GF(3)[]
+            sage: C = HyperellipticCurve(x^7 + 2*x^4 + x + 2)
+            sage: JF = Jacobian(C).point_homset()
+            sage: (u1, v1) = (x^3 + 2*x + 2, x^2 + x + 1)
+            sage: (u2, v2) = (x^2 + 2*x + 2, 2*x + 1)
+            sage: (u3, v3) = JF.cantor_add(u1, v1, u2, v2)
+            sage: (u3, v3) == (x^3 + x^2 + 1, x + 2)
             True
 
         """
@@ -679,10 +686,9 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         Return the sum of the reduced divisor ``(u1, v1)`` with itself.
 
         Note that the divisor is assumed to be affine, reduced and lie on a
-        ramified hyperelliptic curve.
-        This uses a more efficient algorithm called NUDUPL, which is the
-        NUCOMP algorithm applied to the specific case when the two summands
-        are the same.
+        ramified hyperelliptic curve. This uses a more efficient algorithm
+        called NUDUPL, which is the NUCOMP algorithm applied to the specific
+        case when the two summands are the same.
         
         INPUT:
         - ``(u1, v1)`` -- The mumford representation of a reduced affine
@@ -696,24 +702,30 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             sage: R.<x> = GF(101)[]
             sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
-            sage: J = Jacobian(C)
-            sage: JF = J.point_homset()
-            sage: (u1, v1) = (x + 100, 27*x^0)
-            sage: (u, v) = JF.nucomp(u1, v1, u1, v1)
-            sage: (u, v) == (x^2 + 99*x + 1, 20*x + 7)
+            sage: JF = Jacobian(C).point_homset()
+            sage: (u1, v1) = (x^3 + 58*x^2 + 47*x + 63, 70*x^2 + 61*x + 99)
+            sage: (u, v) = JF._nudupl(u1, v1)
+            sage: (u, v) == (x^3 + 87*x^2 + 77*x + 65, 14*x^2 + 92*x + 59)
             True
         
         ALGORITHM: The following code is adapted from Algorithm 20 of [Lin2020]_.
 
         TESTS::
 
-            sage: R.<x> = GF(101)[]
-            sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
-            sage: J = Jacobian(C)
-            sage: JF = J.point_homset()
-            sage: (u1, v1) = (1*x^0, 0*x^0)
-            sage: (u, v) = JF.nucomp(u1, v1, u1, v1) # Add the identity divisor
-            sage: (u, v) == (1*x^0, 0*x^0)
+            sage: R.<x> = GF(2)[]
+            sage: C = HyperellipticCurve(x^7 + x, 1)
+            sage: JF = Jacobian(C).point_homset()
+            sage: (u1, v1) = (x^3 + x^2 + x, x^2 + x + 1)
+            sage: (u, v) = JF._nudupl(u1, v1)
+            sage: (u, v) == (x^3 + x^2 + 1, x^2)
+            True
+
+            sage: R.<x> = GF(3)[]
+            sage: C = HyperellipticCurve(x^7 + 2*x^4 + x + 2)
+            sage: JF = Jacobian(C).point_homset()
+            sage: (u1, v1) = (x^3 + 2*x + 2, x^2 + x + 1)
+            sage: (u, v) = JF._nudupl(u1, v1)
+            sage: (u, v) == (x^2 + x + 2, x)
             True
         
         """
@@ -788,26 +800,33 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             sage: R.<x> = GF(101)[]
             sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
-            sage: J = Jacobian(C)
-            sage: JF = J.point_homset()
-            sage: (u1, v1) = (x + 100, 27*x^0)
-            sage: (u2, v2) = (x + 2, 52*x^0)
+            sage: JF = Jacobian(C).point_homset()
+            sage: (u1, v1) = (x^3 + 58*x^2 + 47*x + 63, 70*x^2 + 61*x + 99)
+            sage: (u2, v2) = (x^3 + 44*x^2 + 44*x + 20, 16*x^2 + 23*x + 66)
             sage: (u3, v3) = JF.nucomp(u1, v1, u2, v2)
-            sage: (u3, v3) == (x^2 + x + 99, 59*x + 69)
+            sage: (u3, v3) == (x^3 + 5*x^2 + 92*x + 31, 21*x^2 + 71*x + 90)
             True
-        
+
         ALGORITHM: The following code is adapted from Algorithm 3 of [LIJ2020]_.
 
         TESTS::
 
-            sage: R.<x> = GF(101)[]
-            sage: C = HyperellipticCurve(x^7 + x^3 - x + 1, x^3 + 2)
-            sage: J = Jacobian(C)
-            sage: JF = J.point_homset()
-            sage: (u1, v1) = (1*x^0, 0*x^0)
-            sage: (u2, v2) = (x + 100, 27*x^0)
-            sage: (u3, v3) = JF.nucomp(u1, v1, u2, v2) # Add the identity divisor
-            sage: (u3, v3) == (x + 100, 27*x^0)
+            sage: R.<x> = GF(2)[]
+            sage: C = HyperellipticCurve(x^7 + x, 1)
+            sage: JF = Jacobian(C).point_homset()
+            sage: (u1, v1) = (x^3 + x^2 + x, x^2 + x + 1)
+            sage: (u2, v2) = (x^3 + x^2 + 1, x^2)
+            sage: (u3, v3) = JF.nucomp(u1, v1, u2, v2)
+            sage: (u3, v3) == (x + 1, 1)
+            True
+
+            sage: R.<x> = GF(3)[]
+            sage: C = HyperellipticCurve(x^7 + 2*x^4 + x + 2)
+            sage: JF = Jacobian(C).point_homset()
+            sage: (u1, v1) = (x^3 + 2*x + 2, x^2 + x + 1)
+            sage: (u2, v2) = (x^2 + 2*x + 2, 2*x + 1)
+            sage: (u3, v3) = JF.nucomp(u1, v1, u2, v2)
+            sage: (u3, v3) == (x^3 + x^2 + 1, x + 2)
             True
         
         """
