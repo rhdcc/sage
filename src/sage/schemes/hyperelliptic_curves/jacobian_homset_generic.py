@@ -686,8 +686,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         
         INPUT:
         - ``(u1, v1)`` -- The mumford representation of a reduced affine
-        divisor `D_1` which corresponds to the divisor
-        `D_1 - \text{deg}(u_1)\infty` on the curve.
+          divisor `D_1` which corresponds to the divisor
+          `D_1 - \text{deg}(u_1)\infty` on the curve.
 
         OUTPUT: ``(u, v)`` -- The mumford representation of the reduced affine
         divisor denoting the double of the divisor ``(u1, v1)``.
@@ -778,17 +778,11 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         than cantor for divisor addition.
 
         INPUT:
-        - ``(u1, v1)`` -- The mumford representation of a reduced affine
-        divisor `D_1` which corresponds to the divisor
-        `D_1 - \text{deg}(u_1)\infty` on the curve.
+        - ``(u1, v1)`` -- The mumford representation of a reduced affine divisor `D_1` which corresponds to the divisor `D_1 - \text{deg}(u_1)\infty` on the curve.
         
-        - ``(u2, v2)`` -- The mumford representation of a reduced affine
-        divisor `D_2` which corresponds to the divisor
-        `D_2 - \text{deg}(u_2)\infty` on the curve.
+        - ``(u2, v2)`` -- The mumford representation of a reduced affine divisor `D_2` which corresponds to the divisor `D_2 - \text{deg}(u_2)\infty` on the curve.
 
-        OUTPUT: ``(u3, v3)`` -- The mumford representation of the reduced
-        affine divisor `D_3` satisfying
-        `[D_3 - \text{deg}(u_3)\infty] = [D_1 - \text{deg}(u_1)\infty] + [D_2 - \text{deg}(u_2)\infty]`.
+        OUTPUT: ``(u3, v3)`` -- The mumford representation of the reduced affine divisor `D_3` satisfying `[D_3 - \text{deg}(u_3)\infty] = [D_1 - \text{deg}(u_1)\infty] + [D_2 - \text{deg}(u_2)\infty]`.
         
         EXAMPLES::
 
